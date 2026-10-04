@@ -176,11 +176,6 @@ namespace UnityEditor.XR.OpenXR.Features
                     })
                     .Any());
 
-            if (!importers.Any())
-            {
-                throw new BuildFailedException("No OpenXR loader library found. Make sure the Unity OpenXR plug-in package is installed properly.");
-            }
-
             return importers;
         }
 
@@ -189,13 +184,6 @@ namespace UnityEditor.XR.OpenXR.Features
             var loaderLibName = !string.IsNullOrWhiteSpace(customLoaderFeature.CustomLoaderName) ? customLoaderFeature.CustomLoaderName : K_openXrLoaderLibName;
             var importers = allPluginImporters
                 .Where(importer => Path.GetDirectoryName(importer.assetPath).Contains(customLoaderFeature.PluginPath) && importer.assetPath.Contains(loaderLibName));
-
-            if (!importers.Any())
-            {
-                throw new Exception(
-                    $"Build process couldn't find the Plugin Importer for the OpenXR Loader library of the feature \"{customLoaderFeature.Attribute.UiName}\", " +
-                    $"the file was expected to be in path: {customLoaderFeature.PluginPath}");
-            }
 
             return importers;
         }

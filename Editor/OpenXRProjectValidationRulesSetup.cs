@@ -199,39 +199,4 @@ namespace UnityEditor.XR.OpenXR
 
         internal static void CloseWindow() { }
     }
-
-    internal class OpenXRProjectValidationBuildStep : IPreprocessBuildWithReport
-    {
-        [OnOpenAsset(0)]
-#if UNITY_6000_4_OR_NEWER
-        static bool ConsoleErrorDoubleClicked(EntityId id, int line)
-#else
-        static bool ConsoleErrorDoubleClicked(int id, int line)
-#endif
-        {
-#if UNITY_6000_3_OR_NEWER
-            var objName = EditorUtility.EntityIdToObject(id).name;
-#else
-            var objName = EditorUtility.InstanceIDToObject(id).name;
-#endif
-            if (objName == "OpenXRProjectValidation")
-            {
-                OpenXRProjectValidationRulesSetup.ShowWindow();
-                return true;
-            }
-
-            return false;
-        }
-
-        public int callbackOrder { get; }
-
-        public void OnPreprocessBuild(BuildReport report)
-        {
-            if (!BuildHelperUtils.HasActiveLoader(report.summary.platformGroup, typeof(OpenXRLoaderBase)))
-                return;
-
-            if (OpenXRProjectValidation.LogBuildValidationIssues(report.summary.platformGroup))
-                throw new BuildFailedException("OpenXR Build Failed.");
-        }
-    }
 }
